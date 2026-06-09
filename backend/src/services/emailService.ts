@@ -66,7 +66,7 @@ class EmailService {
           message: params.message || 'No additional message provided.',
           submittedAt: submittedAtFormatted,
         } as EmailTemplateData),
-        replyTo: params.email,
+        reply_to: params.email,
       }),
 
       // Email 2: Customer confirmation
@@ -80,7 +80,7 @@ class EmailService {
           productRequirement: params.productRequirement,
           submittedAt: submittedAtFormatted,
         }),
-        replyTo: this.businessEmail,
+        reply_to: this.businessEmail,
       }),
     ]);
 
