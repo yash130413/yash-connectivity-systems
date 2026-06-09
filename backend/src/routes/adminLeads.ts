@@ -1,6 +1,8 @@
 import { Router, Response } from 'express';
 import { getDatabase } from '../db/connection.js';
 import { authMiddleware, AuthRequest } from '../middleware/auth.js';
+import { parsePagination } from '../utils/pagination.js';
+import { parseObjectId } from '../utils/objectId.js';
 
 const router = Router();
 
@@ -11,24 +13,26 @@ router.use(authMiddleware);
 router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const db = getDatabase();
-    const { status, page = '1', limit = '20' } = req.query;
+    const { status, page, limit } = req.query;
+    const { page: pageNum, limit: limitNum, skip } = parsePagination(
+      page as string | undefined,
+      limit as string | undefined,
+    );
 
     const filter: Record<string, string> = {};
     if (status && typeof status === 'string') filter.status = status;
-
-    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
 
     const [leads, total] = await Promise.all([
       db.collection('leads')
         .find(filter)
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(parseInt(limit as string))
+        .limit(limitNum)
         .toArray(),
       db.collection('leads').countDocuments(filter),
     ]);
 
-    res.json({ success: true, leads, total, page: parseInt(page as string), limit: parseInt(limit as string) });
+    res.json({ success: true, leads, total, page: pageNum, limit: limitNum });
   } catch (error) {
     console.error('Fetch leads error:', error);
     res.status(500).json({ success: false, message: 'Failed to fetch leads.' });
@@ -37,8 +41,10 @@ router.get('/', async (req: AuthRequest, res: Response) => {
 
 // PATCH /api/admin/leads/:id/status
 router.patch('/:id/status', async (req: AuthRequest, res: Response) => {
+  const objectId = parseObjectId(req.params.id, res);
+  if (!objectId) return;
+
   try {
-    const { ObjectId } = await import('mongodb');
     const db = getDatabase();
     const { status } = req.body;
 
@@ -49,7 +55,7 @@ router.patch('/:id/status', async (req: AuthRequest, res: Response) => {
     }
 
     await db.collection('leads').updateOne(
-      { _id: new ObjectId(req.params.id) },
+      { _id: objectId },
       { $set: { status } }
     );
 

@@ -1,9 +1,10 @@
 import { Router, Request, Response } from 'express';
-import { ObjectId } from 'mongodb';
 import { getDatabase } from '../db/connection.js';
 import { authMiddleware, AuthRequest } from '../middleware/auth.js';
 import { upload } from '../middleware/upload.js';
 import { Product, generateSlug } from '../models/Product.js';
+import { parsePagination } from '../utils/pagination.js';
+import { parseObjectId } from '../utils/objectId.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -13,7 +14,11 @@ const router = Router();
 router.get('/', async (req: Request, res: Response) => {
   try {
     const db = getDatabase();
-    const { category, search, page = '1', limit = '20', active } = req.query;
+    const { category, search, page, limit, active } = req.query;
+    const { page: pageNum, limit: limitNum, skip } = parsePagination(
+      page as string | undefined,
+      limit as string | undefined,
+    );
 
     const filter: Record<string, unknown> = {};
     if (category && typeof category === 'string') filter.category = category;
@@ -25,19 +30,17 @@ router.get('/', async (req: Request, res: Response) => {
       ];
     }
 
-    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
-
     const [products, total] = await Promise.all([
       db.collection('products')
         .find(filter)
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(parseInt(limit as string))
+        .limit(limitNum)
         .toArray(),
       db.collection('products').countDocuments(filter),
     ]);
 
-    res.json({ success: true, products, total, page: parseInt(page as string) });
+    res.json({ success: true, products, total, page: pageNum });
   } catch (error) {
     console.error('Fetch products error:', error);
     res.status(500).json({ success: false, message: 'Failed to fetch products.' });
@@ -89,11 +92,14 @@ router.post('/', upload.single('image'), async (req: AuthRequest, res: Response)
 
 // PUT /api/products/:id
 router.put('/:id', upload.single('image'), async (req: AuthRequest, res: Response) => {
+  const objectId = parseObjectId(req.params.id, res);
+  if (!objectId) return;
+
   try {
     const db = getDatabase();
     const { name, category, description, short, featured, active } = req.body;
 
-    const existing = await db.collection('products').findOne({ _id: new ObjectId(req.params.id) });
+    const existing = await db.collection('products').findOne({ _id: objectId });
     if (!existing) {
       res.status(404).json({ success: false, message: 'Product not found.' });
       return;
@@ -124,7 +130,7 @@ router.put('/:id', upload.single('image'), async (req: AuthRequest, res: Respons
     };
 
     await db.collection('products').updateOne(
-      { _id: new ObjectId(req.params.id) },
+      { _id: objectId },
       { $set: updates }
     );
 
@@ -138,9 +144,12 @@ router.put('/:id', upload.single('image'), async (req: AuthRequest, res: Respons
 
 // DELETE /api/products/:id
 router.delete('/:id', async (req: AuthRequest, res: Response) => {
+  const objectId = parseObjectId(req.params.id, res);
+  if (!objectId) return;
+
   try {
     const db = getDatabase();
-    const product = await db.collection('products').findOne({ _id: new ObjectId(req.params.id) });
+    const product = await db.collection('products').findOne({ _id: objectId });
 
     if (!product) {
       res.status(404).json({ success: false, message: 'Product not found.' });
@@ -153,7 +162,7 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
       if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
     }
 
-    await db.collection('products').deleteOne({ _id: new ObjectId(req.params.id) });
+    await db.collection('products').deleteOne({ _id: objectId });
     console.log('✅ Product deleted');
     res.json({ success: true, message: 'Product deleted.' });
   } catch (error) {

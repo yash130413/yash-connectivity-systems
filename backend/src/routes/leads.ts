@@ -2,11 +2,12 @@ import { Router, Request, Response } from 'express';
 import { getDatabase } from '../db/connection.js';
 import { LeadSchema, Lead } from '../models/Lead.js';
 import { emailService } from '../services/emailService.js';
+import { leadsRateLimiter } from '../middleware/rateLimit.js';
 import { z } from 'zod';
 
 const router = Router();
 
-router.post('/leads', async (req: Request, res: Response) => {
+router.post('/leads', leadsRateLimiter, async (req: Request, res: Response) => {
   try {
     const validatedData = LeadSchema.parse(req.body);
 

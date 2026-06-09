@@ -41,3 +41,13 @@ export function getDatabase(): Db {
   }
   return db;
 }
+
+export async function pingDatabase(): Promise<boolean> {
+  try {
+    const database = getDatabase();
+    await database.command({ ping: 1 });
+    return true;
+  } catch {
+    return false;
+  }
+}
