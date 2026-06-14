@@ -1,4 +1,5 @@
 import { MongoClient, Db } from 'mongodb';
+import { ensureIndexes } from './indexes.js';
 
 let client: MongoClient | null = null;
 let db: Db | null = null;
@@ -18,6 +19,7 @@ export async function connectToDatabase(): Promise<Db> {
     client = new MongoClient(uri);
     await client.connect();
     db = client.db('ycs');
+    await ensureIndexes(db);
     console.log('✅ Successfully connected to MongoDB Atlas');
     return db;
   } catch (error) {

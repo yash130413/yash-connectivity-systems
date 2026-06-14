@@ -15,6 +15,7 @@ export interface SendQuoteNotificationParams {
 class EmailService {
   private resend: Resend | null = null;
   private businessEmail: string = '';
+  private fromEmail: string = '';
   private isConfigured: boolean = false;
   private initialized: boolean = false;
 
@@ -23,6 +24,7 @@ class EmailService {
 
     const apiKey = process.env.RESEND_API_KEY;
     this.businessEmail = process.env.BUSINESS_EMAIL || 'yash.consys@gmail.com';
+    this.fromEmail = process.env.RESEND_FROM_EMAIL || 'Yash Connectivity Systems <onboarding@resend.dev>';
 
     if (apiKey) {
       this.resend = new Resend(apiKey);
@@ -54,7 +56,7 @@ class EmailService {
     const [businessResult, customerResult] = await Promise.allSettled([
       // Email 1: Business owner notification
       this.resend.emails.send({
-        from: 'Yash Connectivity Systems <onboarding@resend.dev>',
+        from: this.fromEmail,
         to: [this.businessEmail],
         subject: '🚀 New Quote Request Received',
         html: generateQuoteEmailTemplate({
@@ -71,7 +73,7 @@ class EmailService {
 
       // Email 2: Customer confirmation
       this.resend.emails.send({
-        from: 'Yash Connectivity Systems <onboarding@resend.dev>',
+        from: this.fromEmail,
         to: [params.email],
         subject: '✅ We received your quote request!',
         html: generateCustomerConfirmationTemplate({

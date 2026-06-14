@@ -6,7 +6,7 @@ import { Product, generateSlug } from '../models/Product.js';
 import { parsePagination } from '../utils/pagination.js';
 import { parseObjectId } from '../utils/objectId.js';
 import fs from 'fs';
-import path from 'path';
+import { getUploadFilePath } from '../config/uploads.js';
 
 const router = Router();
 
@@ -108,7 +108,7 @@ router.put('/:id', upload.single('image'), async (req: AuthRequest, res: Respons
     let imageUrl = existing.imageUrl as string;
     if (req.file) {
       if (imageUrl) {
-        const oldPath = path.resolve('uploads', path.basename(imageUrl));
+        const oldPath = getUploadFilePath(imageUrl);
         if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
       }
       imageUrl = `/uploads/${req.file.filename}`;
@@ -158,7 +158,7 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
 
     // Delete image file
     if (product.imageUrl) {
-      const imgPath = path.resolve('uploads', path.basename(product.imageUrl as string));
+      const imgPath = getUploadFilePath(product.imageUrl as string);
       if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
     }
 

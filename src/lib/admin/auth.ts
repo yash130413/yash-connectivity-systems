@@ -1,7 +1,7 @@
+import { API_URL } from '@/lib/config/api';
+
 const TOKEN_KEY = 'ycs_admin_token';
 const ADMIN_KEY = 'ycs_admin_info';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 export interface AdminInfo {
   email: string;

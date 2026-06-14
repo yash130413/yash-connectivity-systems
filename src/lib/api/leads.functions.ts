@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { API_URL } from '@/lib/config/api';
 
 const LeadSchema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -13,8 +14,6 @@ const LeadSchema = z.object({
 export type LeadInput = z.infer<typeof LeadSchema>;
 
 export async function submitLead(data: LeadInput) {
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-
   const payload = {
     name: data.name,
     company: data.company,
@@ -26,7 +25,7 @@ export async function submitLead(data: LeadInput) {
   };
 
   try {
-    const res = await fetch(`${apiUrl}/api/leads`, {
+    const res = await fetch(`${API_URL}/api/leads`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

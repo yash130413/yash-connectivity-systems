@@ -13,6 +13,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { Server } from 'http';
 import { validateEnv, getCorsOrigin, shouldTrustProxy } from './config/env.js';
+import { UPLOAD_DIR } from './config/uploads.js';
 import { connectToDatabase, closeDatabase, pingDatabase } from './db/connection.js';
 import { globalRateLimiter } from './middleware/rateLimit.js';
 import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
@@ -31,7 +32,9 @@ if (shouldTrustProxy()) {
   app.set('trust proxy', 1);
 }
 
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
 app.use(cors({
   origin: getCorsOrigin(),
   credentials: true,
@@ -39,12 +42,12 @@ app.use(cors({
 app.use(globalRateLimiter);
 app.use(express.json());
 
-// Serve uploaded images statically
+// Serve uploaded images statically (cross-origin for Amplify frontend)
 app.use('/uploads', (req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || 'http://localhost:5173');
+  res.setHeader('Access-Control-Allow-Origin', getCorsOrigin());
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   next();
-}, express.static(path.resolve(__dirname, '../uploads')));
+}, express.static(UPLOAD_DIR));
 
 app.use('/api', leadsRouter);
 app.use('/api/admin', adminRouter);

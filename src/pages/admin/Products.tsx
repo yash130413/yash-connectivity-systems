@@ -4,7 +4,6 @@ import { fetchProducts, deleteProduct, PRODUCT_CATEGORIES, type Product } from '
 import ProductFormModal from '@/components/admin/ProductFormModal';
 import { getProductImage } from '@/lib/api/products.functions';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 const PAGE_SIZE = 12;
 
 export default function AdminProducts() {
