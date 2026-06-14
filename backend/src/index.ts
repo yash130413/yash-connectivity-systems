@@ -40,7 +40,11 @@ app.use(globalRateLimiter);
 app.use(express.json());
 
 // Serve uploaded images statically
-app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
+app.use('/uploads', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || 'http://localhost:5173');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static(path.resolve(__dirname, '../uploads')));
 
 app.use('/api', leadsRouter);
 app.use('/api/admin', adminRouter);
