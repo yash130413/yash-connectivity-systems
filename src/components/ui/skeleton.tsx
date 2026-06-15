@@ -1,3 +1,8 @@
+// Base Skeleton component (used by shadcn sidebar and other UI components)
+export function Skeleton({ className = "" }: { className?: string }) {
+  return <div className={`skeleton ${className}`} />;
+}
+
 export function SkeletonBox({ className = "" }: { className?: string }) {
   return <div className={`skeleton ${className}`} />;
 }
