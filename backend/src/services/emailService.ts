@@ -24,7 +24,11 @@ class EmailService {
 
     const apiKey = process.env.RESEND_API_KEY;
     this.businessEmail = process.env.BUSINESS_EMAIL || 'yash.consys@gmail.com';
-    this.fromEmail = process.env.RESEND_FROM_EMAIL || 'Yash Connectivity Systems <onboarding@resend.dev>';
+    const fromEmail = process.env.RESEND_FROM_EMAIL;
+    this.fromEmail = fromEmail
+      ? fromEmail
+      : 'Yash Connectivity Systems <onboarding@resend.dev>';
+    console.log('📤 Sending emails from:', this.fromEmail);
 
     if (apiKey) {
       this.resend = new Resend(apiKey);
