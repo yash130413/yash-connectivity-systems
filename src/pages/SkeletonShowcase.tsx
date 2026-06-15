@@ -12,7 +12,7 @@ import {
   SkeletonIndustryCard,
   SkeletonStats,
   SkeletonPageContent
-} from '@/components/ui/Skeleton';
+} from '@/components/ui/skeleton';
 import { LoadingSpinner, LoadingSection, LoadingOverlay } from '@/components/ui/Loading';
 import { useState } from 'react';
 

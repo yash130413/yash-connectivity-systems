@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Clock } from 'lucide-react';
 import { PageHero } from '@/components/site/SectionHeader';
 import { BLOG_POSTS } from '@/lib/site-data';
-import { SkeletonBlogCard } from '@/components/ui/Skeleton';
+import { SkeletonBlogCard } from '@/components/ui/skeleton';
 
 export default function BlogPage() {
   const [isLoading, setIsLoading] = useState(true);

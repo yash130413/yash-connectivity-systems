@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ChevronRight } from 'lucide-react';
 import { PageHero } from '@/components/site/SectionHeader';
-import { SkeletonProductCard } from '@/components/ui/Skeleton';
+import { SkeletonProductCard } from '@/components/ui/skeleton';
 import { fetchProducts, type DBProduct, getProductImage } from '@/lib/api/products.functions';
 
 const CATEGORIES = [

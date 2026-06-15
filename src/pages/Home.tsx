@@ -6,7 +6,7 @@ import { COMPANY, INDUSTRIES, CLIENTS, STATS, WHY_US, STEPS, TESTIMONIALS } from
 import { SectionHeader } from '@/components/site/SectionHeader';
 import { QuoteForm } from '@/components/site/QuoteForm';
 import { ClientCarousel } from '@/components/site/ClientCarousel';
-import { SkeletonProductCard, SkeletonTestimonial } from '@/components/ui/Skeleton';
+import { SkeletonProductCard, SkeletonTestimonial } from '@/components/ui/skeleton';
 import { fetchProducts, type DBProduct, getProductImage } from '@/lib/api/products.functions';
 
 const WHY_ICONS = [ShieldCheck, BadgePercent, Truck, Headphones, Factory, Sparkles];
