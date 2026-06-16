@@ -61,7 +61,7 @@ export function Header() {
             src={logo}
             alt="YCS Logo"
             className={`object-contain transition-all duration-300 ${
-              scrolled ? "h-7 w-7" : "h-9 w-9"
+              scrolled ? "h-7 w-auto" : "h-20 w-auto"
             }`}
           />
           <span className="flex flex-col leading-tight">
