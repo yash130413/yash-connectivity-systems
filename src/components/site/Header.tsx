@@ -66,7 +66,7 @@ export function Header() {
           />
           <span className="flex flex-col leading-tight">
             <span className={`font-display font-bold text-primary transition-all duration-300 ${
-              scrolled ? "text-xs md:text-sm" : "text-sm md:text-[17px]"
+              scrolled ? "text-xs md:text-sm" : "text-sm md:text-[22px]"
             }`}>
               <span className="hidden sm:inline">{COMPANY.short}</span>
               <span className="sm:hidden">YCS</span>
