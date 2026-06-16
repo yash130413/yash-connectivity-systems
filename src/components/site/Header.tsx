@@ -61,12 +61,12 @@ export function Header() {
             src={logo}
             alt="YCS Logo"
             className={`object-contain transition-all duration-300 ${
-              scrolled ? "h-7 w-auto" : "h-15 w-auto"
+              scrolled ? "h-7 w-auto" : "h-10 sm:h-15 w-auto"
             }`}
           />
           <span className="flex flex-col leading-tight">
             <span className={`font-display font-bold text-primary transition-all duration-300 ${
-              scrolled ? "text-xs md:text-sm" : "text-sm md:text-[22px]"
+              scrolled ? "text-base sm:text-xs md:text-sm" : "text-xl sm:text-sm md:text-[22px]"
             }`}>
               <span className="hidden sm:inline">{COMPANY.short}</span>
               <span className="sm:hidden">YCS</span>
